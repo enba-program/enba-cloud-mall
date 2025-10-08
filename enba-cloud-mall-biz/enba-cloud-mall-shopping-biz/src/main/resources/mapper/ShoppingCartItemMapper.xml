@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.enba.cloud.shopping.mapper.ShoppingCartItemMapper">
+
+  <!-- 根据购物车ID查询所有商品项 -->
+  <select id="selectByCartId" resultType="com.enba.cloud.shopping.api.entity.ShoppingCartItem">
+    SELECT *
+    FROM shopping_cart_item
+    WHERE cart_id = #{cartId}
+  </select>
+
+  <!-- 根据用户ID查询购物车项（包含购物车主表信息） -->
+  <select id="selectByUserIdWithCart"
+    resultType="com.enba.cloud.shopping.api.entity.ShoppingCartItem">
+    SELECT sci.*
+    FROM shopping_cart_item sci
+           JOIN shopping_cart sc ON sci.cart_id = sc.cart_id
+    WHERE sc.user_id = #{userId}
+  </select>
+
+  <!-- 批量插入购物车项 -->
+  <insert id="batchInsert">
+    INSERT INTO shopping_cart_item (cart_id, product_id, sku_id, quantity, is_selected, price,
+    origin_price, specs, product_name, product_image, created_at, updated_at)
+    VALUES
+    <foreach collection="items" item="item" separator=",">
+      (#{item.cartId}, #{item.productId}, #{item.skuId}, #{item.quantity}, #{item.isSelected},
+      #{item.price}, #{item.originPrice}, #{item.specs}, #{item.productName}, #{item.productImage},
+      #{item.createdAt}, #{item.updatedAt})
+    </foreach>
+  </insert>
+
+  <!-- 更新购物车项选中状态 -->
+  <update id="updateItemSelected">
+    UPDATE shopping_cart_item
+    SET is_selected = #{isSelected},
+        updated_at  = NOW()
+    WHERE item_id = #{itemId}
+  </update>
+
+  <!-- 更新购物车项数量 -->
+  <update id="updateItemQuantity">
+    UPDATE shopping_cart_item
+    SET quantity   = #{quantity},
+        updated_at = NOW()
+    WHERE item_id = #{itemId}
+  </update>
+
+  <!-- 删除购物车项 -->
+  <delete id="deleteByItemIds">
+    DELETE FROM shopping_cart_item
+    WHERE item_id IN
+    <foreach collection="itemIds" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+</mapper>

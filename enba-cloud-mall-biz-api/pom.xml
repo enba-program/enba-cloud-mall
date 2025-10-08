@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.enba.cloud</groupId>
+    <artifactId>enba-cloud-mall</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>enba-cloud-mall-biz-api</artifactId>
+  <packaging>pom</packaging>
+  <modules>
+    <module>enba-cloud-mall-goods-biz-api</module>
+    <module>enba-cloud-mall-orders-biz-api</module>
+    <module>enba-cloud-mall-shopping-biz-api</module>
+    <module>enba-cloud-mall-users-biz-api</module>
+    <module>enba-cloud-mall-file-biz-api</module>
+    <module>enba-cloud-mall-area-biz-api</module>
+  </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.enba.boot</groupId>
+      <artifactId>enba-boot-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus-annotation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus-extension</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.boot</groupId>
+      <artifactId>enba-boot-starter-openfeign</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.openfeign</groupId>
+      <artifactId>feign-httpclient</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.cloud</groupId>
+      <artifactId>enba-cloud-mall-common</artifactId>
+    </dependency>
+  </dependencies>
+</project>

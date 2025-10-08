@@ -1,0 +1,83 @@
+server:
+  port: 8080
+  max-http-header-size: 108KB
+spring:
+  application:
+    name: enba-cloud-gateway
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+  redis:
+    enabled: true
+    host: 127.0.0.1
+    port: 6379
+    database: 1
+    password:
+    lettuce:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1
+        enabled: true
+  config:
+    import:
+      - nacos:${spring.application.name}.yml
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+      config:
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+        file-extension: yml
+    gateway:
+      httpclient:
+        connect-timeout: 20000
+        response-timeout: 200s
+      discovery:
+        locator:
+          lowerCaseServiceId: true
+          enabled: true
+      #路由规则
+      routes:
+        # 前台H5商城服务
+        - id: facade-h5-application
+          uri: lb://facade-h5-application
+          predicates:
+            - Path=/facade-h5/**,/facadeH5/**
+          filters:
+            - StripPrefix=1
+        - id: facade-mini-application
+          uri: lb://facade-mini-application
+          predicates:
+            - Path=/facade-mini/**,/facadeMini/**
+          filters:
+            - StripPrefix=1
+
+# 安全配置
+security:
+  # 跨域配置
+  cors:
+    allowed-origins: http://localhost,https://cloud.dev.jujiabao.com.cn
+  # 不校验白名单
+  ignore:
+    whites:
+      - /api/auth/register
+      - /api/auth/login
+      - /api/auth/logout
+#logging:
+#  config: classpath:logback-spring.xml
+
+jwt:
+  secret-key: 7868768dfsdjkhkjhkjh
+  expirationMs: 1440
+  notBeforeMs: 0
+
+login:
+  check:
+    # 是否跳过登录校验，true表示跳过并使用模拟用户，false表示进行真实校验
+    skip-check: false

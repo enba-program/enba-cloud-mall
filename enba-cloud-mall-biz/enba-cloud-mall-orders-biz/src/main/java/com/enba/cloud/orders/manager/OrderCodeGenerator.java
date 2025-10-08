@@ -1,0 +1,23 @@
+package com.enba.cloud.orders.manager;
+
+
+import com.enba.cloud.common.utils.CustomCodeGenerator;
+import lombok.extern.slf4j.Slf4j;
+
+/** 订单编号生成器 */
+@Slf4j
+public class OrderCodeGenerator {
+
+  private static final String DEFAULT_ORDER_CODE_PREFIX = "B";
+
+  private static final String DEFAULT_ORDER_CODE_TIME_PATTERN = "yyyyMMddHHmmss";
+
+  private static final int DEFAULT_ORDER_CODE_RANDOM_DIGITS = 3;
+
+  public static String generateCode() {
+    return CustomCodeGenerator.generateCode(
+        DEFAULT_ORDER_CODE_PREFIX,
+        DEFAULT_ORDER_CODE_TIME_PATTERN,
+        DEFAULT_ORDER_CODE_RANDOM_DIGITS);
+  }
+}

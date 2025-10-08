@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.enba.cloud</groupId>
+    <artifactId>enba-cloud-mall-biz</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>enba-cloud-mall-orders-biz</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.enba.cloud</groupId>
+      <artifactId>enba-cloud-mall-orders-biz-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.cloud</groupId>
+      <artifactId>enba-cloud-mall-goods-biz-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.boot</groupId>
+      <artifactId>enba-boot-starter-payment</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.boot</groupId>
+      <artifactId>enba-boot-starter-mysql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.boot</groupId>
+      <artifactId>enba-boot-starter-redis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.boot</groupId>
+      <artifactId>enba-boot-starter-mq</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.rocketmq</groupId>
+      <artifactId>rocketmq-spring-boot-starter</artifactId>
+    </dependency>
+  </dependencies>
+
+</project>

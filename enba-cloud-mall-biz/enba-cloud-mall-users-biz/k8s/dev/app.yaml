@@ -1,0 +1,101 @@
+apiVersion: apps/v1          # 指定使用的Kubernetes API版本，apps/v1是Deployment的稳定版本
+kind: Deployment             # 资源类型为Deployment，用于声明式管理Pod和ReplicaSet
+metadata:
+  name: user-service         # Deployment的名称，用于唯一标识该资源
+  namespace: microservices   # 部署到microservices命名空间，实现多环境/项目资源隔离
+  labels:                    # 给Deployment添加标签，用于资源筛选和关联
+    app: user-service        # 应用名称标签
+    tier: backend            # 服务层级标签（后端服务）
+    environment: production  # 环境标签（生产环境）
+spec:
+  replicas: 3                # 指定运行的Pod副本数为3，保证服务高可用
+  selector:                  # 标签选择器，用于匹配需要管理的Pod
+    matchLabels:
+      app: user-service      # 匹配带有app=user-service标签的Pod
+  strategy:                  # 部署更新策略配置
+    rollingUpdate:           # 滚动更新策略（逐步替换旧版本Pod）
+      maxSurge: 1            # 更新时最多可超出期望副本数的数量（允许临时多1个Pod）
+      maxUnavailable: 0      # 更新过程中最多不可用的副本数（确保服务不中断）
+    type: RollingUpdate      # 使用滚动更新策略（替代Recreate策略）
+  template:                  # Pod模板，定义Pod的具体规格
+    metadata:
+      labels:                # Pod的标签，必须与selector.matchLabels匹配
+        app: user-service
+        tier: backend
+        environment: production
+    spec:
+      containers:            # 容器配置列表（一个Pod可包含多个容器）
+        - name: user-service # 容器名称，在Pod内唯一
+          image: your-registry/user-service:latest  # 容器使用的镜像地址
+          imagePullPolicy: Always  # 镜像拉取策略：总是从仓库拉取最新镜像
+          ports:
+            - containerPort: 8080  # 容器内部暴露的端口（应用实际监听的端口）
+          resources:          # 容器资源限制配置
+            requests:         # 容器启动时请求的最小资源（调度依据）
+              memory: "512Mi" # 请求512MB内存（1Mi≈1.048MB）
+              cpu: "500m"     # 请求0.5核CPU（1000m=1核）
+            limits:           # 容器允许使用的最大资源（防止资源滥用）
+              memory: "1Gi"   # 最大使用1GB内存
+              cpu: "1000m"    # 最大使用1核CPU
+          env:                # 注入容器的环境变量
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"   # 激活Spring的prod环境配置
+            # 数据库连接信息（从Secret获取，避免明文存储敏感信息）
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:  # 引用Secret中的配置
+                  name: user-service-db-credentials  # Secret名称
+                  key: url                           # 读取Secret中的url字段
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: user-service-db-credentials
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: user-service-db-credentials
+                  key: password
+            # 服务注册中心地址
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: "http://service-registry:8761/eureka/"
+          readinessProbe:     # 就绪探针（判断容器是否可接收请求）
+            httpGet:          # 使用HTTP GET方法检查
+              path: /actuator/health/readiness  # 检查路径（需Spring Actuator支持）
+              port: 8080      # 检查端口
+            initialDelaySeconds: 30  # 容器启动后延迟30秒开始检查
+            periodSeconds: 10        # 每隔10秒检查一次
+            timeoutSeconds: 3        # 检查超时时间3秒
+            failureThreshold: 3      # 连续3次失败视为未就绪
+          livenessProbe:      # 存活探针（判断容器是否正常运行）
+            httpGet:
+              path: /actuator/health/liveness  # 存活检查路径
+              port: 8080
+            initialDelaySeconds: 60  # 容器启动后延迟60秒开始检查
+            periodSeconds: 15        # 每隔15秒检查一次
+            timeoutSeconds: 3        # 检查超时时间3秒
+            failureThreshold: 3      # 连续3次失败会自动重启容器
+          volumeMounts:       # 容器内挂载卷配置
+            - name: config-volume  # 卷名称（需与下方volumes.name一致）
+              mountPath: /app/config  # 容器内的挂载路径（应用读取配置的目录）
+      volumes:               # 定义Pod使用的卷
+        - name: config-volume  # 卷名称
+          configMap:          # 使用ConfigMap作为卷的数据源
+            name: user-service-config  # 关联的ConfigMap名称（存储非敏感配置）
+
+---                           # 资源分隔符，用于在一个文件中定义多个K8s资源
+apiVersion: v1                # Service使用的API版本
+kind: Service                 # 资源类型为Service，用于暴露Pod网络
+metadata:
+  name: user-service          # Service名称，与Deployment保持一致便于识别
+  namespace: microservices    # 所属命名空间，与Deployment保持一致
+  labels:
+    app: user-service
+    tier: backend
+spec:
+  selector:                   # 标签选择器，匹配需要暴露的Pod
+    app: user-service         # 关联带有app=user-service标签的Pod
+  ports:
+    - port: 80                # Service暴露的端口（集群内访问的端口）
+      targetPort: 8080        # 映射到Pod的端口（与containerPort一致）
+  type: ClusterIP             # Service类型为ClusterIP，仅在集群内部可访问

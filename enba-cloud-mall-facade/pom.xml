@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.enba.cloud</groupId>
+    <artifactId>enba-cloud-mall</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>enba-cloud-mall-facade</artifactId>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>enba-cloud-mall-app-application</module>
+    <module>enba-cloud-mall-mini-application</module>
+    <module>enba-cloud-mall-ops-application</module>
+    <module>enba-cloud-mall-h5-application</module>
+  </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.enba.boot</groupId>
+      <artifactId>enba-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.boot</groupId>
+      <artifactId>enba-boot-starter-ex</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.enba.cloud</groupId>
+      <artifactId>enba-cloud-mall-file-biz-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.cloud</groupId>
+      <artifactId>enba-cloud-mall-goods-biz-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.cloud</groupId>
+      <artifactId>enba-cloud-mall-orders-biz-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.cloud</groupId>
+      <artifactId>enba-cloud-mall-shopping-biz-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.enba.cloud</groupId>
+      <artifactId>enba-cloud-mall-users-biz-api</artifactId>
+    </dependency>
+
+    <!-- SpringCloud Alibaba Nacos -->
+    <dependency>
+      <groupId>com.alibaba.cloud</groupId>
+      <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+    </dependency>
+    <!--		 SpringCloud Alibaba Nacos Config-->
+    <dependency>
+      <groupId>com.alibaba.cloud</groupId>
+      <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <version>${spring-boot-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,101 @@
+apiVersion: apps/v1          # 指定使用的Kubernetes API版本
+kind: Deployment             # 资源类型为Deployment，用于声明式管理Pod
+metadata:
+  name: order-service        # Deployment的名称
+  namespace: microservices   # 部署到microservices命名空间，实现资源隔离
+  labels:                    # 为Deployment添加标签
+    app: order-service       # 应用名称标签
+    tier: backend            # 服务层级标签（后端服务）
+    environment: production  # 环境标签（生产环境）
+spec:
+  replicas: 3                # 运行3个Pod副本，保证高可用
+  selector:                  # 标签选择器，匹配管理的Pod
+    matchLabels:
+      app: order-service     # 匹配app=order-service标签的Pod
+  strategy:                  # 部署更新策略
+    rollingUpdate:           # 滚动更新策略
+      maxSurge: 1            # 更新时最多可超出期望副本数1个
+      maxUnavailable: 0      # 更新过程中不允许有不可用的Pod
+    type: RollingUpdate      # 明确指定使用滚动更新
+  template:                  # Pod模板
+    metadata:
+      labels:                # Pod的标签
+        app: order-service
+        tier: backend
+        environment: production
+    spec:
+      containers:            # 容器配置
+        - name: order-service  # 容器名称
+          image: your-registry/order-service:latest  # 使用的镜像
+          imagePullPolicy: Always  # 总是拉取最新镜像
+          ports:
+            - containerPort: 8080  # 容器暴露的端口
+          resources:          # 资源配置
+            requests:         # 资源请求（调度依据）
+              memory: "768Mi" # 请求768MB内存
+              cpu: "750m"     # 请求0.75核CPU
+            limits:           # 资源限制（防止滥用）
+              memory: "1.5Gi" # 最大使用1.5GB内存
+              cpu: "1500m"    # 最大使用1.5核CPU
+          env:                # 环境变量配置
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"   # 激活prod环境配置
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                secretKeyRef:  # 从Secret获取数据库URL
+                  name: order-service-db-credentials
+                  key: url
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:  # 从Secret获取数据库用户名
+                  name: order-service-db-credentials
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:  # 从Secret获取数据库密码
+                  name: order-service-db-credentials
+                  key: password
+            - name: SPRING_RABBITMQ_HOST
+              value: "rabbitmq-service"  # RabbitMQ服务地址
+            - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+              value: "http://service-registry:8761/eureka/"  # Eureka注册中心地址
+          readinessProbe:     # 就绪探针
+            httpGet:          # 使用HTTP GET检查
+              path: /actuator/health/readiness  # 检查路径
+              port: 8080      # 检查端口
+            initialDelaySeconds: 40  # 启动后40秒开始检查
+            periodSeconds: 10        # 每10秒检查一次
+            timeoutSeconds: 3        # 检查超时时间3秒
+            failureThreshold: 3      # 连续3次失败视为未就绪
+          livenessProbe:      # 存活探针
+            httpGet:
+              path: /actuator/health/liveness  # 存活检查路径
+              port: 8080
+            initialDelaySeconds: 70  # 启动后70秒开始检查
+            periodSeconds: 15        # 每15秒检查一次
+            timeoutSeconds: 3        # 检查超时时间3秒
+            failureThreshold: 3      # 连续3次失败重启容器
+          volumeMounts:       # 挂载卷
+            - name: config-volume  # 卷名称
+              mountPath: /app/config  # 容器内挂载路径
+      volumes:               # 定义卷
+        - name: config-volume  # 卷名称
+          configMap:          # 使用ConfigMap作为卷源
+            name: order-service-config  # ConfigMap名称
+
+---                           # 资源分隔符
+apiVersion: v1                # Service使用的API版本
+kind: Service                 # 资源类型为Service
+metadata:
+  name: order-service         # Service名称
+  namespace: microservices    # 所属命名空间
+  labels:
+    app: order-service
+    tier: backend
+spec:
+  selector:                   # 标签选择器
+    app: order-service        # 关联app=order-service的Pod
+  ports:
+    - port: 80                # Service暴露的端口
+      targetPort: 8080        # 映射到Pod的端口
+  type: ClusterIP             # Service类型为ClusterIP，仅集群内部可访问

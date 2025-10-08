@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.enba.cloud</groupId>
+  <artifactId>enba-cloud-mall</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>enba-cloud-mall</name>
+  <description>enba-cloud-mall</description>
+
+  <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+
+    <spring-boot-maven-plugin.version>2.6.1</spring-boot-maven-plugin.version>
+    <pagehelper-spring-boot-starter.version>2.0.0</pagehelper-spring-boot-starter.version>
+    <guava.version>31.0.1-jre</guava.version>
+    <rocketmq-spring-boot-starter.version>2.2.3</rocketmq-spring-boot-starter.version>
+  </properties>
+
+  <modules>
+    <module>enba-cloud-mall-common</module>
+    <module>enba-cloud-mall-biz-api</module>
+    <module>enba-cloud-mall-biz</module>
+    <module>enba-cloud-mall-facade</module>
+    <module>enba-cloud-mall-gateway</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.enba.boot</groupId>
+        <artifactId>enba-boot-dependencies</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>com.enba.cloud</groupId>
+        <artifactId>enba-cloud-mall-area-biz-api</artifactId>
+        <version>0.0.1-${deploy-env}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.enba.cloud</groupId>
+        <artifactId>enba-cloud-mall-file-biz-api</artifactId>
+        <version>0.0.1-${deploy-env}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.enba.cloud</groupId>
+        <artifactId>enba-cloud-mall-goods-biz-api</artifactId>
+        <version>0.0.1-${deploy-env}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.enba.cloud</groupId>
+        <artifactId>enba-cloud-mall-orders-biz-api</artifactId>
+        <version>0.0.1-${deploy-env}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.enba.cloud</groupId>
+        <artifactId>enba-cloud-mall-shopping-biz-api</artifactId>
+        <version>0.0.1-${deploy-env}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.enba.cloud</groupId>
+        <artifactId>enba-cloud-mall-users-biz-api</artifactId>
+        <version>0.0.1-${deploy-env}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.enba.cloud</groupId>
+        <artifactId>enba-cloud-mall-common</artifactId>
+        <version>0.0.1-${deploy-env}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rocketmq</groupId>
+        <artifactId>rocketmq-spring-boot-starter</artifactId>
+        <version>${rocketmq-spring-boot-starter.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <excludes>
+          <exclude>config/dev/**</exclude>
+          <exclude>config/test/**</exclude>
+          <exclude>config/prod/**</exclude>
+        </excludes>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/resources/config/${profiles.active}</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+
+  <profiles>
+    <!-- 开发环境配置 -->
+    <profile>
+      <id>dev</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <deploy-env>dev-SNAPSHOT</deploy-env>
+        <profiles.active>dev</profiles.active>
+      </properties>
+    </profile>
+    <!-- 测试环境配置 -->
+    <profile>
+      <id>test</id>
+      <properties>
+        <deploy-env>test-SNAPSHOT</deploy-env>
+        <profiles.active>test</profiles.active>
+      </properties>
+    </profile>
+    <!-- 正式环境配置 -->
+    <profile>
+      <id>prod</id>
+      <properties>
+        <deploy-env>prod-SNAPSHOT</deploy-env>
+        <profiles.active>prod</profiles.active>
+      </properties>
+    </profile>
+  </profiles>
+</project>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="true" scanPeriod="60 seconds">
+
+  <property name="LOG_CONTEXT_NAME" value="enba-cloud-mall-goods-biz"/>
+  <!--定义日志文件的存储地址 勿在LogBack的配置中使用相对路径-->
+  <property name="LOG_HOME" value="logs/${LOG_CONTEXT_NAME}"/>
+  <!-- 定义日志上下文的名称 -->
+  <contextName>${LOG_CONTEXT_NAME}</contextName>
+
+  <!--  控制台输出  -->
+  <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+      <pattern>[%contextName] %d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] [%thread] %-5level %logger{56}.%method:%L - %msg%n
+      </pattern>
+      <charset>utf-8</charset>
+    </encoder>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>INFO</level>
+    </filter>
+  </appender>
+
+  <!--info日志统一输出-->
+  <appender name="file.info" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <Prudent>true</Prudent>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!--日志文件输出的文件名，按天生成-->
+      <FileNamePattern>${LOG_HOME}.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+      <!--日志文件保留天数-->
+      <MaxHistory>15</MaxHistory>
+      <timeBasedFileNamingAndTriggeringPolicy
+        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <!-- 除按日志记录之外，还配置了日志文件不能超过100M(默认)，若超过100M，日志文件会以索引0开始 -->
+        <maxFileSize>100MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %method 方法名  %L 行数 %msg：日志消息，%n是换行符-->
+      <pattern>[%contextName] %d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId}] [%thread] %-5level %logger{56}.%method:%L - %msg%n
+      </pattern>
+      <charset>utf-8</charset>
+    </encoder>
+  </appender>
+
+  <appender name="async-info" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="file.info"/>
+  </appender>
+
+  <!--  日志输出级别 -->
+  <root level="INFO">
+    <appender-ref ref="console"/>
+    <appender-ref ref="async-info"/>
+  </root>
+</configuration>
