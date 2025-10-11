@@ -14,6 +14,7 @@ import com.enba.cloud.common.enums.OrderShippingMethodEnum;
 import com.enba.cloud.common.enums.OrderShippingStatusEnum;
 import com.enba.cloud.common.enums.OrderSourceTypeEnum;
 import com.enba.cloud.common.enums.OrderStatusEnum;
+import com.enba.cloud.common.mq.MqConsts;
 import com.enba.cloud.goods.api.sku.client.SkuClient;
 import com.enba.cloud.goods.api.sku.entity.Sku;
 import com.enba.cloud.orders.api.order.entity.Order;
@@ -297,7 +298,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     order.setCancelReason(req.getCancelReason());
     orderMapper.updateById(order);
 
-    notificationService.notifyUser(req.getOrderId(), userId, "取消订单");
+    // 取消订单
+    notificationService.notifyUser(req.getOrderId(), userId, MqConsts.ORDER_CANCEL_TAG);
 
     // 添加操作日志
     log.info(String.format("用户%s取消订单: %s,原因%s", userId, order.getOrderNo(), req.getCancelReason()));
@@ -322,8 +324,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     orderMapper.updateById(order);
     log.info("订单已关闭: {}", orderId);
 
-    // 发送通知
-    notificationService.notifyUser(orderId, order.getUserId(), "关闭订单");
+    // 关闭订单
+    notificationService.notifyUser(orderId, order.getUserId(), MqConsts.ORDER_CLOSE_TAG);
 
     if (OrderStatusEnum.PAID.getStatus().equals(order.getOrderStatus())) {
       // 已付款订单 自动退款
@@ -376,8 +378,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     orderMapper.updateById(order);
     log.info("订单已退款: {}", orderId);
 
-    // 恢复库存
-    notificationService.notifyUser(orderId, userId, "用户申请退款");
+    // 恢复库存 用户申请退款
+    notificationService.notifyUser(orderId, userId, MqConsts.ORDER_REFUND_TAG);
 
     if (order.getOrderStatus().equals(OrderStatusEnum.PAID.getStatus())) {
       // 用户申请退款，订单状态为已付款时，直接发起退款
@@ -425,8 +427,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     log.info("订单已发货: {}", orderId);
 
-    // 发送通知
-    notificationService.notifyUser(orderId, order.getUserId(), "订单发货");
+    // 发送通知 订单发货
+    notificationService.notifyUser(orderId, order.getUserId(), MqConsts.ORDER_SEND_GOODS_TAG);
 
     // 添加操作日志
     orderLogManager.addOrderLog(order.getOrderId(), OrderLogActionEnum.WAREHOUSE_SEND_GOODS, "发货");
@@ -454,8 +456,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     log.info("订单已收货: {}", orderId);
 
-    // 发送通知
-    notificationService.notifyUser(orderId, order.getUserId(), "订单收货");
+    // 发送通知 订单收货
+    notificationService.notifyUser(orderId, order.getUserId(), MqConsts.ORDER_RECEIVE_TAG);
 
     if (OrderStatusEnum.COMPLETED.getStatus().equals(order.getOrderStatus())) {
       // 发送积分
@@ -495,6 +497,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     orderCommentMapper.insert(orderComment);
     log.info("订单已评价: {}", orderId);
 
-    notificationService.notifyUser(null, order.getUserId(), "订单已评价");
+    // 评价订单
+    notificationService.notifyUser(orderId, order.getUserId(), MqConsts.ORDER_COMMENT_TAG);
   }
 }
