@@ -1,11 +1,11 @@
 package com.enba.cloud.orders.order.mq.consumer;
 
-import com.alibaba.fastjson.JSONObject;
 import com.enba.cloud.common.mq.MqConsts;
 import com.enba.cloud.common.mq.payload.CreateOrderSuccessPayload;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.annotation.SelectorType;
-import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,16 +14,17 @@ import org.springframework.stereotype.Service;
     selectorType = SelectorType.TAG, // 指定按 Tag 过滤
     selectorExpression = MqConsts.ORDER_REFUND_TAG, // 只消费带有指定tag的消息
     consumerGroup = "OrderRefundTagConsumer-group")
-public class OrderRefundTagConsumer implements RocketMQListener<String> {
+@Slf4j
+public class OrderRefundTagConsumer extends AbstractBaseConsumer{
 
   /** 用户申请退款 */
   @Override
-  public void onMessage(String message) {
-    // 处理消息逻辑
-    CreateOrderSuccessPayload createOrderSuccessPayload =
-        JSONObject.parseObject(message, CreateOrderSuccessPayload.class);
+  protected boolean canHandle(MessageExt messageExt) {
+    return false;
+  }
 
-    // 订单号
-    String orderNo = createOrderSuccessPayload.getOrderNo();
+  @Override
+  protected void handleMessage(CreateOrderSuccessPayload createOrderSuccessPayload) {
+
   }
 }

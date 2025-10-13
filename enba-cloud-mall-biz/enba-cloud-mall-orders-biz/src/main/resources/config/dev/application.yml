@@ -54,8 +54,12 @@ spring:
 
 # 启动activemq，kafka，rabbitmq，rocketmq开关
 mq:
-  activemq: # 启动activemq，kafka，rabbitmq，rocketmq
-    enable: false
+  rocketmq: # 启动activemq，kafka，rabbitmq，rocketmq
+    enable: true
 
 rocketmq:
-  name-server: 127.0.0.1:9876  # RocketMQ NameServer 地址
+  name-server: 127.0.0.1:9876  # RocketMQ NameServer地址
+  producer:
+    group: springboot-producer-group  # 生产者组名
+    send-message-timeout: 5000  # 发送消息超时时间，单位毫秒
+    retry-times-when-send-failed: 3  # 发送失败重试次数

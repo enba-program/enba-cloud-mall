@@ -29,6 +29,7 @@ public class NotificationService {
     mqHelper.sendMessageByTopic(
         MqConsts.ORDER_TOPIC + ":" + tag,
         new CreateOrderSuccessPayload().setOrderNo(String.valueOf(orderId)).serialize(),
-        null);
+        String.valueOf(orderId),
+        () -> "success");
   }
 }
