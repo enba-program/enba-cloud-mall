@@ -182,10 +182,13 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: product-service
-          uri: lb://product-service
+        # 前台H5商城服务
+        - id: facade-h5-application
+          uri: lb://facade-h5-application
           predicates:
-            - Path=/api/products/**filters=StripPrefix=1
+            - Path=/facade-h5/**,/facadeH5/**
+          filters:
+            - StripPrefix=1
 ```
 
 ## 开发规范
