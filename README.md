@@ -6,6 +6,10 @@
 
 enba-cloud-mall 是一个基于 Spring Cloud Alibaba 生态的微服务商城系统，采用前后端分离架构，包含商品、订单、用户、购物车等核心电商模块，可作为企业级微服务项目的基础框架进行二次开发。
 
+`注意!!!,项目依赖enba-boot脚手架，请先安装enba-boot脚手架(mvn clean install -DskipTests=true)`
+* 码云地址：[enba-boot](https://gitee.com/mn_cxy/enba-boot)
+* github地址：[enba-boot](https://github.com/enba-program/enba-boot)
+
 ## 项目架构
 
 ### 技术栈
