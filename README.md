@@ -12,6 +12,9 @@ enba-cloud-mall 是一个基于 Spring Cloud Alibaba 生态的微服务商城系
 
 ## 项目架构
 
+### 架构图
+<img src="./framework.png" width="100%" height="100%">
+
 ### 技术栈
 
 - **核心框架**：Spring Boot 2.6.1、Spring Cloud Alibaba
