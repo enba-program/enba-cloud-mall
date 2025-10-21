@@ -2,6 +2,8 @@ server:
   port: 9090
 
 spring:
+  profiles:
+    active: test
   application:
     name: facade-h5-application
   config:

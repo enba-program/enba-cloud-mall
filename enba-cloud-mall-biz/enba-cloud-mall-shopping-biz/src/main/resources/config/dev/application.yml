@@ -1,6 +1,8 @@
 server:
   port: 8084
 spring:
+  profiles:
+    active: dev
   application:
     name: enba-cloud-shopping-service
   config:

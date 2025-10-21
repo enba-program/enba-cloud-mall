@@ -2,6 +2,8 @@
   port:  8081
 
 spring:
+  profiles:
+    active: test
   application:
     name: enba-cloud-file-service
   config:

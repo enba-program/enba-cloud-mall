@@ -2,6 +2,8 @@ server:
   port: 8080
   max-http-header-size: 108KB
 spring:
+  profiles:
+    active: test
   application:
     name: enba-cloud-gateway
   main:

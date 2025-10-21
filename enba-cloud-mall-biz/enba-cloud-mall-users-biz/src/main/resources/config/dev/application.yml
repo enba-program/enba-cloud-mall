@@ -2,6 +2,8 @@
   port: 8085
 
 spring:
+  profiles:
+    active: dev
   application:
     name: enba-cloud-user-service
   config:

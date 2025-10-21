@@ -2,6 +2,8 @@ server:
   port: 9090
 
 spring:
+  profiles:
+    active: prod
   application:
     name: facade-h5-application
   config:
