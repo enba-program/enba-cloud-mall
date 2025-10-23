@@ -60,6 +60,10 @@ mall-sku:
 openfeign:
   enabled: true
 
+elasticsearch:
+  url: 127.0.0.1:9200
+  password: elastic123!
+
 userName: ${user.name}
 
 userName2: @user.name@
