@@ -21,9 +21,10 @@ enba-cloud-mall 是一个基于 Spring Cloud Alibaba 生态的微服务商城系
 - **服务注册与发现**：Nacos
 - **配置中心**：Nacos Config
 - **API网关**：Spring Cloud Gateway
-- **数据存储**：MySQL 8.0、Redis 6.x
+- **数据存储**：MySQL 8.x、Redis 7.2.x
 - **ORM框架**：MyBatis（通过动态数据源实现主从分离）
-- **消息队列**：RocketMQ
+- **消息队列**：RocketMQ 4.9.x
+- **全文检索**：Elasticsearch 7.17.x
 - **部署环境**：Kubernetes
 
 ### 项目结构
