@@ -30,7 +30,7 @@ docker pull mysql:8.0.36  # 推荐使用具体小版本，而非 latest
 ```bash
 docker run -d \
   --name mysql8 \
-  --restart=always \  # 容器退出后自动重启
+  --restart=unless-stopped \  # 容器退出后自动重启
   -p 3306:3306 \      # 端口映射（宿主机:容器）
   -v /data/mysql8/data:/var/lib/mysql \  # 数据持久化
   -v /data/mysql8/conf:/etc/mysql/conf.d \  # 配置文件挂载

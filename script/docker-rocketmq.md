@@ -97,7 +97,7 @@ EOF
 ```bash
 docker run -d \
   --name rmqnamesrv \
-  --restart=always \
+  --restart=unless-stopped \
   -p 9876:9876 \
   -v /data/rocketmq/4.9.1/namesrv/logs:/root/logs \
   -e MAX_HEAP_SIZE=512m \  # 最大堆内存（根据服务器配置调整）
@@ -112,7 +112,7 @@ docker run -d \
 ```bash
 docker run -d \
   --name rmqbroker \
-  --restart=always \
+  --restart=unless-stopped \
   --link rmqnamesrv:namesrv \  # 关联 namesrv 容器，内部可通过 namesrv 访问
   -p 10911:10911 \  # 主服务端口
   -p 10909:10909 \  # 从服务端口（单节点也需映射）

@@ -65,7 +65,7 @@ docker pull redis:7.2.4  # 推荐 7.x 版本（支持更多安全特性）
 ```bash
 docker run -d \
   --name redis \
-  --restart=always \          # 容器退出后自动重启（生产必备）
+  --restart=unless-stopped \          # 容器退出后自动重启（生产必备）
   --net=bridge \              # 使用桥接网络（默认，便于端口控制）
   -p 6379:6379 \              # 端口映射（宿主机:容器，如需隐藏端口可修改宿主机端口）
   -v /data/redis/data:/data \ # 数据持久化（RDB/AOF文件存储）

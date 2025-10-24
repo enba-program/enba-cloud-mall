@@ -75,7 +75,7 @@ EOF
 ```bash
 docker run -d \
   --name es7 \
-  --restart=always \  # 容器退出后自动重启
+  --restart=unless-stopped \  # 容器退出后自动重启
   -p 9200:9200 \      # HTTP 端口（客户端访问）
   -p 9300:9300 \      # 传输层端口（集群内通信）
   -v /data/elasticsearch/7.17.10/data:/usr/share/elasticsearch/data \
